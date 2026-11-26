@@ -1,7 +1,7 @@
 """Definición de los cuatro casos de estudio y de sus tres escenarios.
 
 Planteamiento (semana 1): variables, unidades, hipótesis, referencias y escenarios.
-La implementación de cada caso está en backend/simtele/casos/ (semana 2).
+La implementación de cada caso está en backend/simtele/casos/ (semana 3).
 """
 
 from __future__ import annotations

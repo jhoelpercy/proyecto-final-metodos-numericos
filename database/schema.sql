@@ -1,4 +1,4 @@
--- SIMTELE-RISK: modelo de datos (SQLite 3). Versión 2 (semana 2).
+-- SIMTELE-RISK: modelo de datos (SQLite 3). Versión 2 (semana 3).
 -- Cambios respecto de la semana 1:
 --   * simulacion.resultado_json guarda tablas, gráficos, indicadores y conclusiones del escenario;
 --   * simulacion.tiempo_total_ms y ejecucion_metodo.familia / criterio / orden completan la trazabilidad.

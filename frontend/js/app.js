@@ -1,5 +1,5 @@
 /**
- * SIMTELE-RISK · aplicación web (semana 2).
+ * SIMTELE-RISK · aplicación web (semana 3).
  * Rutas: #/ inicio y panel · #/modulo/:id · #/simulacion/:id · #/historial
  * Modo API (FastAPI + SQLite) o modo estático (datos/experimentos.json, sin historial).
  */
@@ -69,10 +69,10 @@
       await pedir("/api/salud", { signal: ctl.signal });
       clearTimeout(t);
       estado.modulos = await pedir("/api/modulos");
-      $("#modo").textContent = "Semana 2 · API + SQLite";
+      $("#modo").textContent = "Semana 3 · API + SQLite";
     } catch (_) {
       estado.modo = "estatico";
-      $("#modo").textContent = "Semana 2 · modo estático";
+      $("#modo").textContent = "Semana 3 · modo estático";
       try {
         estado.estatico = await pedir("datos/experimentos.json");
         estado.modulos = estado.estatico.modulos;

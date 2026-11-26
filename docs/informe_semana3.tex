@@ -1,4 +1,4 @@
-% Informe de avance, semana 2. Compilar desde docs/ con:  xelatex informe_semana2.tex  (dos veces)
+% Informe de avance, semana 3. Compilar desde docs/ con:  xelatex informe_semana3.tex  (dos veces)
 % Las tablas de informe_s2/ y las figuras fig/s2_*.png se generan con:  python docs/generar_informe_s2.py
 \documentclass[11pt,letterpaper]{article}
 \usepackage{amsmath,amssymb}
@@ -28,7 +28,7 @@
 \captionsetup{font=small,labelfont=bf}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small SIMTELE-RISK · Semana 2}
+\fancyhead[L]{\small SIMTELE-RISK · Semana 3}
 \fancyhead[R]{\small Métodos Numéricos · UMSA, FCPN}
 \fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0pt}
@@ -49,7 +49,7 @@ Desafío integrador final\par
 \vspace{1.2cm}
 \includegraphics[height=6.2cm]{fig/logo_umsa.png}\par
 \vspace{1.4cm}
-{\large\bfseries Informe de avance, semana 2: integración matemática, aplicación y persistencia\par}
+{\large\bfseries Informe de avance, semana 3: integración matemática, aplicación y persistencia\par}
 \vspace{0.4cm}
 {\bfseries Integrantes\par}
 \vspace{4pt}
@@ -73,12 +73,12 @@ La Paz, Bolivia · noviembre de 2026
 
 % ---------------- 1 ----------------
 \section{Alcance entregado}
-Este informe documenta la semana 2 de SIMTELE-RISK. Sobre los modelos, la teoría de errores y los sistemas lineales de la semana 1, se implementaron las familias de interpolación, raíces, integración y EDO; los cuatro módulos ejecutan sus \textbf{tres} escenarios (no sólo el NORMAL) con tablas, errores y al menos cuatro gráficos cada uno; la base de datos quedó conectada a una API y se comprobó el ciclo guardar → reiniciar → recuperar → repetir.
+Este informe documenta la semana 3 de SIMTELE-RISK. Sobre los modelos, la teoría de errores y los sistemas lineales de la semana 1, se implementaron las familias de interpolación, raíces, integración y EDO; los cuatro módulos ejecutan sus \textbf{tres} escenarios (no sólo el NORMAL) con tablas, errores y al menos cuatro gráficos cada uno; la base de datos quedó conectada a una API y se comprobó el ciclo guardar → reiniciar → recuperar → repetir.
 
 {\small
 \begin{longtable}{p{6.0cm}p{2.6cm}p{6.6cm}}
 \toprule
-\textbf{Compromiso de la semana 2} & \textbf{Estado} & \textbf{Evidencia}\\
+\textbf{Compromiso de la semana 3} & \textbf{Estado} & \textbf{Evidencia}\\
 \midrule
 Interpolación: Lagrange, Newton (diferencias divididas), spline cúbico & Hecho & Sección 3.1; \texttt{numerico/interpolacion.py}\\
 Raíces: bisección, Newton-Raphson, secante & Hecho & Sección 3.2; \texttt{numerico/raices.py}\\
@@ -260,7 +260,7 @@ Se registran $N$ muestras uniformes de una señal conocida, se ocultan los regis
 El modelo de datos conserva las 6 entidades de la semana 1. Se agregaron campos para que una simulación pueda reconstruirse sin recalcular: \texttt{simulacion.resultado\_json} (indicadores, tablas, gráficos y conclusiones, validado con \texttt{json\_valid}), \texttt{simulacion.tiempo\_total\_ms} y \texttt{ejecucion\_metodo.familia/criterio/orden}. Las iteraciones y los resúmenes siguen normalizados: una fila de \texttt{ejecucion\_metodo} por método, sus filas en \texttt{iteracion\_resultado} (como máximo 400 por método, submuestreadas de forma uniforme e incluyendo la primera y la última) y un \texttt{resultado\_resumen}. Los escenarios con los mismos parámetros se reutilizan. El historial vive en el archivo \texttt{database/simtele.db}, no en memoria.
 
 \begin{figure}[h]\centering\includegraphics[width=0.92\linewidth]{fig/s2_der.png}
-\caption{Modelo entidad-relación, versión 2. En naranja, los campos agregados en la semana 2.}\end{figure}
+\caption{Modelo entidad-relación, versión 2. En naranja, los campos agregados en la semana 3.}\end{figure}
 
 \textbf{Prueba obligatoria} (ejecutar → guardar → cerrar → recuperar → repetir → comparar). Cada simulación se guarda, se cierra la conexión, se abre una nueva, se recupera, se repite el cálculo con los parámetros recuperados y se comparan valores, métricas e iteraciones con la tolerancia $|a-b|\le10^{-12}+10^{-9}\max(|a|,|b|)$:
 \input{informe_s2/persistencia.tex}
@@ -308,7 +308,7 @@ M4 MAL COND., polinomio & Error 59.8 cerca de los extremos. & Fenómeno de Runge
 {\small
 \begin{longtable}{p{2.6cm}p{12.6cm}}
 \toprule
-\textbf{Mención} & \textbf{Aporte en la semana 2}\\
+\textbf{Mención} & \textbf{Aporte en la semana 3}\\
 \midrule
 Ingeniería de Sistemas & API REST con validación y errores 422, persistencia transaccional en SQLite y recuperación sin recalcular, prueba de reinicio, aplicación web con historial y modo estático, 33 pruebas nuevas (de 21 a 54).\\
 IA y Ciencia de Datos & Diseño de los escenarios con datos sintéticos reproducibles (semillas, ruido controlado), validación con registros ocultos, constante de Lebesgue y amplificación del ruido, métricas de error y sensibilidad en los cuatro módulos.\\

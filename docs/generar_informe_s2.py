@@ -1,8 +1,8 @@
-"""Genera las figuras y tablas del informe de la semana 2 a partir de los resultados reales.
+"""Genera las figuras y tablas del informe de la semana 3 a partir de los resultados reales.
 
 Uso, desde la raíz del repositorio:
     python docs/generar_informe_s2.py
-Escribe docs/fig/s2_*.png y docs/informe_s2/*.tex; luego se compila docs/informe_semana2.tex con XeLaTeX.
+Escribe docs/fig/s2_*.png y docs/informe_s2/*.tex; luego se compila docs/informe_semana3.tex con XeLaTeX.
 """
 
 from __future__ import annotations
@@ -104,7 +104,7 @@ def figura_der():
     flecha("simulacion", "ejecucion_metodo", "1 : N  contiene", "b", "t")
     flecha("ejecucion_metodo", "iteracion_resultado", "1 : N  registra", "l", "r")
     flecha("ejecucion_metodo", "resultado_resumen", "1 : 1  resume", "r", "l")
-    ax.text(0.2, -0.55, "En naranja: campos agregados en la semana 2.", fontsize=8, color="#b45309")
+    ax.text(0.2, -0.55, "En naranja: campos agregados en la semana 3.", fontsize=8, color="#b45309")
     fig.tight_layout()
     fig.savefig(FIG / "s2_der.png", dpi=200)
     plt.close(fig)

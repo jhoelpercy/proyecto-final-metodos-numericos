@@ -164,7 +164,7 @@ Abrir `http://localhost:8000/frontend/`. El servidor se ejecuta desde esta carpe
 
 Resultado actual de las pruebas: 21 superadas.
 
-## 7. Plan para la semana 2
+## 7. Plan para la semana 3
 
 1. Implementar raíces, integración, EDO e interpolación con sus pruebas analíticas.
 2. Conectar la base de datos con la API y guardar ejecuciones completas.

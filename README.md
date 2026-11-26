@@ -1,8 +1,8 @@
-# SIMTELE-RISK · Semana 2
+# SIMTELE-RISK · Semana 3
 
 Desafío integrador de **Métodos Numéricos** (UMSA, FCPN, La Paz). Aplicación web para estudiar cuatro casos de un sistema de transporte por cable, cada uno en tres escenarios. Proyecto académico con **datos sintéticos**, inspirado en Mi Teleférico de La Paz: no describe fallas verificadas ni se conecta con equipos reales.
 
-- Informe de la semana 2: [`docs/informe_semana2.pdf`](docs/informe_semana2.pdf)
+- Informe de la semana 3: [`docs/informe_semana3.pdf`](docs/informe_semana3.pdf)
 - Informe de la semana 1: [`docs/informe_semana1.pdf`](docs/informe_semana1.pdf)
 
 ## Integrantes
@@ -73,7 +73,7 @@ docs/              informes, figuras y generar_informe_s2.py (tablas y figuras d
 render.yaml        despliegue como servicio web de Python
 ```
 
-Para regenerar el informe: `pip install -r docs/requirements.txt`, `python docs/generar_informe_s2.py` y compilar `docs/informe_semana2.tex` con XeLaTeX (dos pasadas).
+Para regenerar el informe: `pip install -r docs/requirements.txt`, `python docs/generar_informe_s2.py` y compilar `docs/informe_semana3.tex` con XeLaTeX (dos pasadas).
 
 ## Notas
 
