@@ -1,0 +1,14 @@
+# Despliegue de SIMTELE-RISK (API + aplicación web) como servicio web de Python.
+# Plan gratuito: el disco es efímero, así que la base SQLite se reinicia cuando el
+# servicio se reinicia o se vuelve a desplegar (tras ~15 min sin uso se suspende).
+services:
+  - type: web
+    name: simtele-risk
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt && python -m backend.simtele.experimentos
+    startCommand: uvicorn backend.simtele.api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/salud
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7

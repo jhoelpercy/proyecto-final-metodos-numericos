@@ -1,0 +1,30 @@
+{\footnotesize
+\begin{longtable}{lllrlrrr}
+\toprule
+\textbf{Escenario} & \textbf{Familia} & \textbf{Método} & \textbf{Iter./pasos} & \textbf{Conv.} & \textbf{Resultado} & \textbf{Error abs.} & \textbf{Error rel. / otro} \\
+\midrule
+\endhead
+NORMAL & Raíces & Bisección & 34 & sí & 23.588989 & 2.661$\times10^{-12}$ & res. 4.640$\times10^{-12}$ \\
+NORMAL & Raíces & Newton-Raphson & 6 & sí & 23.588989 & 0 & res. 0 \\
+NORMAL & Raíces & Secante & 8 & sí & 23.588989 & 0 & res. 0 \\
+NORMAL & Sistemas lineales & Jacobi & 13 & sí & — & 1.106$\times10^{-9}$ & res. 2.127$\times10^{-11}$ \\
+NORMAL & Sistemas lineales & Gauss-Seidel & 8 & sí & — & 1.570$\times10^{-9}$ & res. 3.169$\times10^{-11}$ \\
+NORMAL & Sistemas lineales & LU con pivoteo parcial & 1 & sí & — & 7.944$\times10^{-15}$ & res. 9.584$\times10^{-17}$ \\
+NORMAL & Sistemas lineales & Gradiente conjugado & 5 & sí & — & 8.140$\times10^{-15}$ & res. 1.728$\times10^{-16}$ \\
+ESTRÉS & Raíces & Bisección & 44 & sí & 5.3518376 & 3.730$\times10^{-14}$ & res. 1.350$\times10^{-13}$ \\
+ESTRÉS & Raíces & Newton-Raphson & 6 & sí & 5.3518376 & 8.882$\times10^{-16}$ & res. 0 \\
+ESTRÉS & Raíces & Secante & 7 & sí & 5.3518376 & 8.882$\times10^{-16}$ & res. 0 \\
+ESTRÉS & Sistemas lineales & Jacobi & 285 & sí & — & 1.326$\times10^{-10}$ & res. 9.799$\times10^{-13}$ \\
+ESTRÉS & Sistemas lineales & Gauss-Seidel & 147 & sí & — & 1.146$\times10^{-10}$ & res. 8.488$\times10^{-13}$ \\
+ESTRÉS & Sistemas lineales & LU con pivoteo parcial & 1 & sí & — & 2.562$\times10^{-14}$ & res. 8.899$\times10^{-16}$ \\
+ESTRÉS & Sistemas lineales & Gradiente conjugado & 22 & sí & — & 3.398$\times10^{-14}$ & res. 2.044$\times10^{-15}$ \\
+MAL COND. & Raíces & Bisección & 34 & sí & 23.995528 & 2.626$\times10^{-11}$ & res. 7.105$\times10^{-15}$ \\
+MAL COND. & Raíces & Newton-Raphson & 17 & sí & 23.995528 & 2.945$\times10^{-12}$ & res. 0 \\
+MAL COND. & Raíces & Secante & 24 & sí & 23.995528 & 1.626$\times10^{-11}$ & res. 7.105$\times10^{-15}$ \\
+MAL COND. & Sistemas lineales & Jacobi & 128 & no & — & 3.426$\times10^{100}$ & res. 9.076$\times10^{99}$ \\
+MAL COND. & Sistemas lineales & Gauss-Seidel & 5000 & no & — & 0.0335 & res. 2.185$\times10^{-7}$ \\
+MAL COND. & Sistemas lineales & LU con pivoteo parcial & 1 & sí & — & 3.394$\times10^{-7}$ & res. 2.677$\times10^{-17}$ \\
+MAL COND. & Sistemas lineales & Gradiente conjugado & 8 & sí & — & 4.236$\times10^{-4}$ & res. 6.903$\times10^{-11}$ \\
+\bottomrule
+\end{longtable}
+}

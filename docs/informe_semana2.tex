@@ -1,0 +1,326 @@
+% Informe de avance, semana 2. Compilar desde docs/ con:  xelatex informe_semana2.tex  (dos veces)
+% Las tablas de informe_s2/ y las figuras fig/s2_*.png se generan con:  python docs/generar_informe_s2.py
+\documentclass[11pt,letterpaper]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setmonofont[Scale=0.82]{Consolas}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\definecolor{azul}{HTML}{1F3A5F}
+\definecolor{fondo}{HTML}{EEF2F5}
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\color{azul}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{azul}}{\thesubsection}{1em}{}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+\setlength{\LTpre}{4pt}
+\setlength{\LTpost}{4pt}
+\setlist{itemsep=2pt,topsep=3pt}
+\setlist[itemize]{label=$\bullet$}
+\captionsetup{font=small,labelfont=bf}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SIMTELE-RISK · Semana 2}
+\fancyhead[R]{\small Métodos Numéricos · UMSA, FCPN}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\newcommand{\caja}[1]{\par\noindent\colorbox{fondo}{\parbox{\dimexpr\linewidth-2\fboxsep}{#1}}\par}
+
+\begin{document}
+
+% ---------------- Portada ----------------
+\begin{titlepage}
+\centering
+{\large\bfseries UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
+Facultad de Ciencias Puras y Naturales · Carrera de Informática\par
+MÉTODOS NUMÉRICOS\par
+\vspace{1.6cm}
+{\fontsize{34}{40}\selectfont\bfseries\color{azul} SIMTELE-RISK\par}
+\vspace{2pt}
+Desafío integrador final\par
+\vspace{1.2cm}
+\includegraphics[height=6.2cm]{fig/logo_umsa.png}\par
+\vspace{1.4cm}
+{\large\bfseries Informe de avance, semana 2: integración matemática, aplicación y persistencia\par}
+\vspace{0.4cm}
+{\bfseries Integrantes\par}
+\vspace{4pt}
+{\small
+\begin{tabular}{p{6.4cm}llp{3.4cm}}
+\toprule
+\textbf{Nombre} & \textbf{CI} & \textbf{RU} & \textbf{Mención}\\
+\midrule
+Saúl Walter Callisaya Sumi & 15074779 & 1885982 & Ingeniería de Sistemas\\
+Ignacio Josue Zarate Camargo & 12392989 & 1886051 & IA y Ciencia de Datos\\
+Luis Alejandro Zeballos Quiroz & 12896709 & 1886052 & IA y Ciencia de Datos\\
+Jhoel Percy González Herrera & 9990880 & 1886116 & Ingeniería de Sistemas\\
+\bottomrule
+\end{tabular}\par}
+\vfill
+La Paz, Bolivia · noviembre de 2026
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ---------------- 1 ----------------
+\section{Alcance entregado}
+Este informe documenta la semana 2 de SIMTELE-RISK. Sobre los modelos, la teoría de errores y los sistemas lineales de la semana 1, se implementaron las familias de interpolación, raíces, integración y EDO; los cuatro módulos ejecutan sus \textbf{tres} escenarios (no sólo el NORMAL) con tablas, errores y al menos cuatro gráficos cada uno; la base de datos quedó conectada a una API y se comprobó el ciclo guardar → reiniciar → recuperar → repetir.
+
+{\small
+\begin{longtable}{p{6.0cm}p{2.6cm}p{6.6cm}}
+\toprule
+\textbf{Compromiso de la semana 2} & \textbf{Estado} & \textbf{Evidencia}\\
+\midrule
+Interpolación: Lagrange, Newton (diferencias divididas), spline cúbico & Hecho & Sección 3.1; \texttt{numerico/interpolacion.py}\\
+Raíces: bisección, Newton-Raphson, secante & Hecho & Sección 3.2; \texttt{numerico/raices.py}\\
+Integración: trapecio, Simpson 1/3, Romberg & Hecho & Sección 3.3; \texttt{numerico/integracion.py}\\
+EDO: RK2 (Heun, variante declarada) y RK4 & Hecho & Sección 3.4; \texttt{numerico/edo.py}\\
+Los 4 módulos ejecutan NORMAL con tablas, errores y 2 gráficos & Hecho (y además ESTRÉS y MAL COND.) & Sección 4; \texttt{casos/*.py}; 12 escenarios\\
+Escenarios ESTRÉS y MAL CONDICIONADO y primeras comparaciones & Hecho & Secciones 4 y 5\\
+Base de datos funcional; guardar y recuperar una ejecución & Hecho & Sección 6; \texttt{persistencia.py}, \texttt{api.py}\\
+Enlace de la aplicación, repositorio e informe de experimentos y fallos & Hecho (enlace: ver sección 2.3) & Secciones 2 y 7\\
+\bottomrule
+\end{longtable}}
+
+Las pruebas automáticas pasan de 21 (semana 1) a \textbf{54 superadas}: 22 de métodos con solución analítica, 10 de los 12 escenarios, persistencia y API, y 22 de la semana 1 (sistemas y esquema SQL, una nueva) (\texttt{backend/tests/} y \texttt{database/tests/}).
+
+% ---------------- 2 ----------------
+\section{Arquitectura de la aplicación}
+\subsection{Componentes}
+\begin{itemize}
+\item \textbf{Núcleo numérico} (\texttt{backend/simtele/numerico/}): \texttt{errores}, \texttt{sistemas} (semana 1), \texttt{raices}, \texttt{integracion}, \texttt{edo}, \texttt{interpolacion}. Funciones puras que devuelven el valor, las iteraciones, si convergió y el criterio de parada.
+\item \textbf{Casos de estudio} (\texttt{backend/simtele/casos/}): un archivo por módulo con sus parámetros validados (rango, tipo, opciones), los tres escenarios con su fuente de datos y la función \texttt{ejecutar}, que produce un \emph{resultado canónico}: indicadores, ejecuciones por método (iteraciones + resumen), tablas, gráficos y las dos conclusiones separadas.
+\item \textbf{Persistencia} (\texttt{persistencia.py}, SQLite): traduce el resultado canónico al modelo relacional y lo reconstruye leyendo sólo la base.
+\item \textbf{API REST} (\texttt{api.py}, FastAPI) y \textbf{aplicación web} (\texttt{frontend/}, HTML + JavaScript + Chart.js) servida por la misma API.
+\end{itemize}
+
+{\small
+\begin{longtable}{p{5.6cm}p{9.6cm}}
+\toprule
+\textbf{Ruta} & \textbf{Función}\\
+\midrule
+\texttt{GET /api/modulos} & Modelos, parámetros con rangos y escenarios de los 4 módulos.\\
+\texttt{POST /api/simular} & Valida, ejecuta y (opcionalmente) guarda una simulación. Parámetros inválidos → 422 con la lista de problemas.\\
+\texttt{GET /api/simulaciones?q=\&modulo=\&tipo=} & Historial con búsqueda por texto, módulo y escenario, paginado.\\
+\texttt{GET /api/simulaciones/\{id\}} & Recupera la simulación completa desde la base.\\
+\texttt{POST /api/simulaciones/\{id\}/relanzar} & Repite el cálculo con los parámetros guardados y compara método a método.\\
+\bottomrule
+\end{longtable}}
+
+\subsection{Pantallas}
+\textbf{Inicio}: cuatro tarjetas (Detención, Deterioro, Oscilaciones, Sensores), el panel general de comparación de los 12 escenarios y la cobertura de métodos por módulo. \textbf{Módulo}: modelo, variables, hipótesis, selector NORMAL/ESTRÉS/MAL CONDICIONADO, formulario de parámetros con validación en el navegador y en el servidor, y resultados: indicadores, gráficos, tabla de métodos con su criterio de parada, tabla de iteraciones de cada método, tablas de refinamiento y la interpretación con la \emph{conclusión numérica} y la \emph{conclusión del problema} en tarjetas separadas. \textbf{Historial}: buscar, abrir, visualizar y relanzar una simulación guardada. Si la API no está disponible, la página funciona en \emph{modo estático} con los 12 escenarios precalculados en \texttt{frontend/datos/experimentos.json} (sin historial).
+
+\subsection{Ejecución y enlace}
+Desde la raíz del repositorio:
+\begin{verbatim}
+pip install -r backend/requirements.txt
+python -m backend.simtele.experimentos      # 12 escenarios + datos del panel
+python -m pytest                            # 54 pruebas
+python -m uvicorn backend.simtele.api:app --port 8000
+\end{verbatim}
+y abrir \url{http://localhost:8000/}. El repositorio incluye \texttt{render.yaml} para publicar la API con la aplicación en un servicio web de Python.
+
+\caja{\textbf{Enlace de la aplicación:} \texttt{[completar con la URL del despliegue]}\\
+\textbf{Repositorio:} \url{https://github.com/Saul-C006/desafio-final-metodos}\\
+Versión estática (sin historial), si se activa GitHub Pages:\ \texttt{https://saul-c006.github.io/desafio-final-metodos/frontend/}}
+
+% ---------------- 3 ----------------
+\section{Métodos implementados y pruebas analíticas}
+Todas las familias usan las medidas de la semana 1: error absoluto, relativo (omitido cuando la referencia es nula, nunca se divide por cero), porcentual, residual, sensibilidad $\kappa_{\mathrm{rel}}=|\delta S/S|/|\delta E/E|$ y orden observado $p=\ln(e_h/e_{h/2})/\ln 2$.
+
+\subsection{Interpolación}
+Lagrange $p_n(t)=\sum_i y_i\prod_{j\ne i}\frac{t-t_j}{t_i-t_j}$; Newton $p_n(t)=f[t_0]+f[t_0,t_1](t-t_0)+\dots$, con $f[t_i,\dots,t_{i+k}]=\frac{f[t_{i+1},\dots,t_{i+k}]-f[t_i,\dots,t_{i+k-1}]}{t_{i+k}-t_i}$ y evaluación de Horner. Ambos construyen el mismo polinomio: su diferencia sólo es redondeo. Spline cúbico natural: los momentos $M_i=s''(t_i)$, con $M_0=M_n=0$, cumplen
+\[ h_{i-1}M_{i-1}+2(h_{i-1}+h_i)M_i+h_iM_{i+1}=6\Big(\tfrac{y_{i+1}-y_i}{h_i}-\tfrac{y_i-y_{i-1}}{h_{i-1}}\Big), \]
+un sistema tridiagonal simétrico y estrictamente diagonal dominante (por tanto SPD) que se resuelve con el \textbf{gradiente conjugado} de la semana 1 (y se contrasta con Gauss-Seidel, Jacobi y LU). El condicionamiento se mide con la constante de Lebesgue $\Lambda=\max_t\sum_i|L_i(t)|$, que acota la amplificación del ruido de los datos.
+
+\textit{Pruebas:} reproducción exacta de un polinomio de grado 4; derivada de Newton; spline exacto para rectas y de orden 4 en $e^t$; sistema del spline SPD; Runge con $\Lambda>10^4$ en nodos uniformes y $\Lambda<3.5$ en Chebyshev.
+
+\subsection{Raíces}
+\begin{enumerate}
+\item \textbf{Bisección}: exige $f(a)f(b)<0$; $c=a+(b-a)/2$; se conserva el subintervalo con cambio de signo; parada $(b-a)/2\le$ tol. Iteraciones $=\lceil\log_2((b-a)/\mathrm{tol})\rceil$.
+\item \textbf{Newton-Raphson}: $x_{k+1}=x_k-f(x_k)/f'(x_k)$; parada $|x_{k+1}-x_k|\le$ tol; se detiene si $f'(x_k)=0$.
+\item \textbf{Secante}: $x_{k+1}=x_k-f(x_k)\frac{x_k-x_{k-1}}{f(x_k)-f(x_{k-1})}$; misma parada; se detiene si la secante es horizontal.
+\end{enumerate}
+Cada iteración registra $x_k$, $|f(x_k)|$ (residual), el paso y el error real $|x_k-x^*|$. \textit{Pruebas:} $\sqrt2$ con la cota exacta de iteraciones de la bisección, convergencia cuadrática de Newton, razón $4/5$ de Newton en una raíz de multiplicidad 5 y detección de derivada nula.
+
+\subsection{Integración}
+Trapecio compuesto $T(h)=h[\tfrac12f_0+\sum f_i+\tfrac12f_n]$ ($O(h^2)$), Simpson 1/3 compuesto ($n$ par, $O(h^4)$; con $n$ impar el último tramo usa Simpson 3/8) y Romberg $R_{i,j}=R_{i,j-1}+\frac{R_{i,j-1}-R_{i-1,j-1}}{4^j-1}$ con parada $|R_{i,i}-R_{i-1,i-1}|\le$ tol, que reutiliza las evaluaciones del nivel anterior. Hay variantes sobre muestras equiespaciadas para integrar la salida de RK4; Romberg sobre muestras usa los trapecios con pasos $h\,2^j$ que caben en la malla. \textit{Pruebas:} órdenes 2 y 4 en $\int_0^\pi\sin t\,dt$, Simpson exacto para cúbicas, Romberg exacto para quínticas en a lo sumo 4 niveles.
+
+\subsection{Ecuaciones diferenciales}
+Variante de RK2 declarada: \textbf{método de Heun}, $k_1=f(t_n,y_n)$, $k_2=f(t_n+h,y_n+hk_1)$, $y_{n+1}=y_n+\tfrac h2(k_1+k_2)$. RK4 clásico, $y_{n+1}=y_n+\tfrac h6(k_1+2k_2+2k_3+k_4)$. Para el frenado se integra hasta el \emph{evento} $v=0$: cuando un paso cambia el signo de $v$, el último paso $h^*$ se obtiene resolviendo $g(h^*)=v(\Phi_{h^*}(y_n))=0$ con la secante. La estabilidad se juzga con el factor de amplificación $R(h\lambda)$ en el autovalor $\lambda$ del sistema lineal: Heun $R=1+z+z^2/2$, RK4 $R=\sum_{k=0}^4 z^k/k!$. \textit{Pruebas:} órdenes 2 y 4 en $x''=-4x$, exactitud de ambos con desaceleración constante, evento $v=0$ y crecimiento espurio de Heun con $h=0.5$.
+
+% ---------------- 4 ----------------
+\section{Resultados por módulo y escenario}
+Los parámetros de cada escenario son sintéticos y se declaran con su fuente. Las tablas de este apartado se generan con \texttt{python docs/generar\_informe\_s2.py} a partir de las mismas funciones que usa la aplicación; las iteraciones completas se ven en la aplicación y quedan guardadas en la base.
+
+% ---- M1 ----
+\subsection{Módulo 1: detención de emergencia}
+Modelo: $\dot x=v$, $\dot v=-a(v,t)$, $x(0)=0$, $v(0)=v_0$, $d_{\mathrm{total}}=v_0t_r+x(t_{\mathrm{det}})$. Referencias cerradas: NORMAL ($a=a_0$) $t_{\mathrm{det}}=v_0/a_0$, $d=v_0^2/(2a_0)$; ESTRÉS ($a=a_0+c_2v^2$) $v(t)=s\tan(\varphi-kt)$ con $s=\sqrt{a_0/c_2}$, $k=\sqrt{a_0c_2}$, $t_{\mathrm{det}}=\varphi/k$, $d=\ln(1+c_2v_0^2/a_0)/(2c_2)$; MAL COND. $v=v_0(1-t/T)^5$, $t_{\mathrm{det}}=T$, $d=v_0T/6$. Métodos: Heun y RK4 (EDO con evento), bisección, Newton y secante para $v(t)=0$, trapecio, Simpson y Romberg para $\int_0^{t_{\mathrm{det}}}v\,dt$.
+
+\input{informe_s2/parametros_detencion.tex}
+\textbf{Tabla de errores por método y escenario} (resultado: $d_{\mathrm{fren}}$ en m para EDO e integración; $t_{\mathrm{det}}$ en s para raíces):
+\input{informe_s2/errores_detencion.tex}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig/s2_m1.png}
+\caption{Módulo 1. Izquierda: velocidad en ESTRÉS con $h=0.5$ s. Centro: error en la distancia al refinar $h$ (pendientes 2 y 4). Derecha: convergencia de las raíces en la raíz múltiple: Newton y secante se vuelven lineales.}\end{figure}
+
+\textbf{ESTRÉS, refinamiento del paso} (órdenes observados $\to2$ y $\to4$):
+\input{informe_s2/m1_ode_estres.tex}
+\textbf{MAL CONDICIONADO, refinamiento del paso.} El error en $t_{\mathrm{det}}$ converge con orden $p/5$ (0.4 para Heun y 0.8 para RK4) mientras el error en la distancia conserva el orden 4 de RK4: el instante de detención es una raíz de multiplicidad 5 y un error $\varepsilon$ en $v$ lo desplaza $T(\varepsilon/v_0)^{1/5}$.
+\input{informe_s2/m1_ode_mal.tex}
+\input{informe_s2/m1_raices_mal.tex}
+\textbf{MAL CONDICIONADO, integración de un polinomio de grado 5}: trapecio orden 2, Simpson orden 4 y Romberg exacto.
+\input{informe_s2/m1_int_mal.tex}
+\textbf{Sensibilidad física (NORMAL)}:
+\input{informe_s2/m1_sens.tex}
+\textbf{Primeras conclusiones.}
+\input{informe_s2/conclusiones_detencion.tex}
+
+% ---- M2 ----
+\subsection{Módulo 2: deterioro y mantenimiento}
+Modelo: $D(t)=D_0+\alpha t+\beta t^2$, $f(t)=D(t)-D_u$. Referencia: menor raíz no negativa de la cuadrática calculada con 50 dígitos decimales y la fórmula sin cancelación $q=-\tfrac12\big(\alpha+\operatorname{sgn}(\alpha)\sqrt{\alpha^2-4\beta(D_0-D_u)}\big)$, $t\in\{q/\beta,\,(D_0-D_u)/q\}$. El intervalo de bisección se obtiene por búsqueda incremental de 1 mes. La calibración por tramos $A\mathbf x=\mathbf b$ de la semana 1 queda integrada al módulo con los mismos resultados. MAL COND.: $D(t)=40+10^{-6}-0.05(t-24)^2$, cuyo máximo queda $10^{-6}$ \% sobre el umbral, y la matriz de Hilbert $n=8$.
+
+\input{informe_s2/parametros_deterioro.tex}
+\textbf{Tabla de errores por método y escenario} (raíces: $t^*$ en meses; sistemas: error de $\mathbf x$ y residuo relativo):
+\input{informe_s2/errores_deterioro.tex}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig/s2_m2.png}
+\caption{Módulo 2. Izquierda: indicador y umbral (NORMAL). Centro: convergencia de las raíces con la curva casi tangente. Derecha: exceso de deterioro según el retraso del mantenimiento (ESTRÉS).}\end{figure}
+
+\textbf{Iteraciones de Newton (NORMAL)}:
+\input{informe_s2/m2_newton_normal.tex}
+\textbf{Sensibilidad en el escenario MAL CONDICIONADO.} $D'(t^*)=4.47\times10^{-4}$ \%/mes da $\kappa=|D_u/(t^*D'(t^*))|\approx3.7\times10^3$; el valor medido con $+10^{-9}$ coincide. Con $+10^{-7}$ el umbral deja de alcanzarse: un cambio cualitativo. Los tres métodos convergen; lo mal condicionado es el problema.
+\input{informe_s2/m2_sens_mal.tex}
+\textbf{Primeras conclusiones.}
+\input{informe_s2/conclusiones_deterioro.tex}
+
+% ---- M3 ----
+\subsection{Módulo 3: oscilaciones por viento}
+Modelo: $m\ddot x+c\dot x+kx=F_0\sin\Omega t$, $c=2\zeta\sqrt{km}$. Referencia cerrada (subamortiguado): $x(t)=e^{-\zeta\omega_0t}[C_1\cos\omega_dt+C_2\sin\omega_dt]+X\sin(\Omega t-\phi)$, con $X=\frac{F_0/m}{\sqrt{(\omega_0^2-\Omega^2)^2+(2\zeta\omega_0\Omega)^2}}$ y $C_1,C_2$ de las condiciones iniciales. La magnitud acumulada $I=\int_0^Tx^2\,dt$ tiene como referencia independiente un Gauss-Legendre compuesto de 10 puntos sobre la solución cerrada. Sensibilidad del problema: $\kappa(X;\Omega)=|d\ln X/d\ln\Omega|$, que en el flanco de la resonancia vale $\approx1/(2\zeta)$.
+
+\input{informe_s2/parametros_oscilaciones.tex}
+\textbf{Tabla de errores por método y escenario} (EDO: amplitud máxima y error máximo en $x$; integración: $I$ sobre las muestras de RK4, Romberg sobre la solución cerrada):
+\input{informe_s2/errores_oscilaciones.tex}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig/s2_m3.png}
+\caption{Módulo 3. Izquierda: con $h=0.5$ s Heun amplifica la oscilación ($|R|=1.051$) y RK4 no. Centro: error máximo frente a $h$. Derecha: curva de respuesta; con $\zeta=0.005$ el pico es alto y estrecho.}\end{figure}
+
+\textbf{ESTRÉS, estabilidad y convergencia}:
+\input{informe_s2/m3_conv_estres.tex}
+\textbf{NORMAL, refinamiento de $I$}:
+\input{informe_s2/m3_int_normal.tex}
+\textbf{MAL CONDICIONADO, sensibilidad}: $+0.1$ \% en $\Omega$ cambia la amplitud un 10.3 \%.
+\input{informe_s2/m3_sens_mal.tex}
+\textbf{Primeras conclusiones.}
+\input{informe_s2/conclusiones_oscilaciones.tex}
+
+% ---- M4 ----
+\subsection{Módulo 4: reconstrucción de señales de sensores}
+Se registran $N$ muestras uniformes de una señal conocida, se ocultan los registros $i$ con $i\bmod k=$ desfase y se reconstruyen con los restantes. NORMAL: $\sin t$ en $[0,2\pi]$; ESTRÉS: $e^{-0.3t}\sin2t$ en $[0,6]$ con ruido gaussiano $\sigma=0.002$ y semilla 7; MAL COND.: pulso de Runge $1/(1+25t^2)$ en $[-1,1]$ con 41 registros de los que se pierden los impares. Sobre el spline se busca el primer cruce de un umbral con los tres métodos de raíces; la referencia es el cruce de la señal real (bisección a $10^{-15}$).
+
+\input{informe_s2/parametros_sensores.tex}
+\textbf{Tabla de errores por método y escenario} (interpolación: RMS y error máximo en los ocultos, error máximo en todo el intervalo; raíces: instante de cruce):
+\input{informe_s2/errores_sensores.tex}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig/s2_m4.png}
+\caption{Módulo 4. Izquierda y centro: fenómeno de Runge con 21 nodos uniformes; el spline y el polinomio en nodos de Chebyshev no lo sufren. Derecha: con ruido, el polinomio de grado 24 amplifica el error hasta 39.5.}\end{figure}
+
+\textbf{ESTRÉS, registros ocultos}:
+\input{informe_s2/m4_ocultos_estres.tex}
+\textbf{ESTRÉS, sistema auxiliar del spline}:
+\input{informe_s2/m4_spline_estres.tex}
+\textbf{MAL CONDICIONADO, condicionamiento}:
+\input{informe_s2/m4_cond_mal.tex}
+\textbf{NORMAL, cruce del umbral $y=0.5$} (referencia $\pi/6$):
+\input{informe_s2/m4_cruce_normal.tex}
+\textbf{Primeras conclusiones.}
+\input{informe_s2/conclusiones_sensores.tex}
+
+% ---------------- 5 ----------------
+\section{Primeras comparaciones transversales}
+\begin{itemize}
+\item \textbf{Exactitud por grado.} En los casos polinómicos (M1 NORMAL, integración del frenado plano) los métodos son exactos hasta su grado: Heun y RK4 reproducen la parábola del frenado, Simpson integra cúbicas y Romberg quínticas. Los errores de $10^{-16}$ son redondeo, no error de método.
+\item \textbf{Órdenes observados.} Heun $\to2$ y RK4 $\to4$ (M1 ESTRÉS, M3 NORMAL); trapecio $\to2$ y Simpson $\to4$ (M1 y M3); Newton cuadrático, secante $\approx1.6$–$2$ y bisección lineal en raíces simples.
+\item \textbf{Estabilidad no es precisión.} En M3 ESTRÉS, con $\omega_0h=1$, Heun es inestable ($|R|>1$) y su error llega a 295 m, mientras RK4 queda en 0.29 m; al bajar a $h=0.25$ s Heun se estabiliza.
+\item \textbf{Mal condicionamiento $\ne$ falta de convergencia.} En los cuatro módulos el escenario MAL CONDICIONADO se construyó como subexperimento numérico: raíz múltiple (M1), raíz casi doble y matriz de Hilbert (M2), flanco de resonancia con $\zeta$ pequeño (M3) y nodos uniformes de Runge (M4). En todos los métodos convergen (salvo Jacobi en Hilbert, por $\rho>1$, y Gauss-Seidel por $\rho\approx1$, que son propiedades del método); lo que se amplifica es el efecto de perturbaciones en los datos, medido por $\kappa$, $\Lambda$ o la amplificación observada.
+\item \textbf{Residuo pequeño no implica error pequeño}, ahora fuera de los sistemas lineales: en M1 MAL COND. Newton termina con $|v|\approx10^{-50}$ y error $3\times10^{-10}$ en $t$.
+\end{itemize}
+
+% ---------------- 6 ----------------
+\section{Base de datos y prueba de persistencia}
+El modelo de datos conserva las 6 entidades de la semana 1. Se agregaron campos para que una simulación pueda reconstruirse sin recalcular: \texttt{simulacion.resultado\_json} (indicadores, tablas, gráficos y conclusiones, validado con \texttt{json\_valid}), \texttt{simulacion.tiempo\_total\_ms} y \texttt{ejecucion\_metodo.familia/criterio/orden}. Las iteraciones y los resúmenes siguen normalizados: una fila de \texttt{ejecucion\_metodo} por método, sus filas en \texttt{iteracion\_resultado} (como máximo 400 por método, submuestreadas de forma uniforme e incluyendo la primera y la última) y un \texttt{resultado\_resumen}. Los escenarios con los mismos parámetros se reutilizan. El historial vive en el archivo \texttt{database/simtele.db}, no en memoria.
+
+\begin{figure}[h]\centering\includegraphics[width=0.92\linewidth]{fig/s2_der.png}
+\caption{Modelo entidad-relación, versión 2. En naranja, los campos agregados en la semana 2.}\end{figure}
+
+\textbf{Prueba obligatoria} (ejecutar → guardar → cerrar → recuperar → repetir → comparar). Cada simulación se guarda, se cierra la conexión, se abre una nueva, se recupera, se repite el cálculo con los parámetros recuperados y se comparan valores, métricas e iteraciones con la tolerancia $|a-b|\le10^{-12}+10^{-9}\max(|a|,|b|)$:
+\input{informe_s2/persistencia.tex}
+La misma prueba se automatizó en \texttt{test\_guardar\_cerrar\_recuperar\_y\_repetir} y \texttt{test\_api\_extremo\_a\_extremo}, y se verificó en la aplicación reiniciando el servidor: la simulación \#1 (M2, MAL COND.) se recuperó y relanzó con 7017 valores coincidentes. Una prueba adicional comprueba que la comparación sí detecta un cambio relativo de $10^{-6}$.
+
+% ---------------- 7 ----------------
+\section{Experimentos y fallos detectados}
+\subsection{Fallos de los métodos observados en los experimentos}
+{\small
+\begin{longtable}{p{3.2cm}p{5.6cm}p{6.4cm}}
+\toprule
+\textbf{Dónde} & \textbf{Observación} & \textbf{Causa e interpretación}\\
+\midrule
+M3 ESTRÉS, Heun & Error máximo de 295 m con $h=0.5$ s. & $|R(h\lambda)|=1.051>1$: inestabilidad numérica, no física. Con $h\le0.25$ s desaparece.\\
+M2 MAL COND., Jacobi & Diverge en 128 iteraciones. & $\rho(T_J)=6.04>1$ con Hilbert.\\
+M2 MAL COND., Gauss-Seidel & No termina en 5000 iteraciones. & $\rho(T_{GS})\approx1$: converge en teoría pero muy lento.\\
+M1 MAL COND., EDO & $t_{\mathrm{det}}$ con error de 0.11 s (RK4) y 1.0 s (Heun). & Raíz de multiplicidad 5; orden observado $p/5$.\\
+M1 MAL COND., Newton y secante & 104 y 146 iteraciones. & Convergencia lineal (razón $4/5$) en raíz múltiple.\\
+M2 MAL COND., raíces & $+10^{-7}$ relativo en $D_u$ elimina la raíz. & $D'(t^*)\approx4.5\times10^{-4}$: curva casi tangente.\\
+M4 ESTRÉS, polinomio & Error 39.5 con datos de error 0.002. & $\Lambda=1.9\times10^5$ con 25 nodos uniformes y huecos.\\
+M4 MAL COND., polinomio & Error 59.8 cerca de los extremos. & Fenómeno de Runge; nodos de Chebyshev bajan el error a 0.015.\\
+\bottomrule
+\end{longtable}}
+
+\subsection{Fallos de implementación encontrados y corregidos}
+\begin{enumerate}
+\item \textbf{Detención con paso fijo.} Integrar con paso fijo hasta que $v<0$ sobrepasa la detención y deja velocidad negativa. Se reemplazó por el ajuste del último paso $h^*$ con la secante (bisección de respaldo), lo que hace exacto el caso de desaceleración constante.
+\item \textbf{Romberg sobre la salida de RK4.} Romberg necesita $2^j$ subintervalos; con $N=400$ sólo caben 5 niveles. Se implementó \texttt{romberg\_datos}, que usa los trapecios con pasos $h\,2^j$ disponibles.
+\item \textbf{Simpson con $n$ impar.} Las mallas de RK4 recortadas pueden tener $n$ impar; se agregó Simpson 3/8 en el último tramo para conservar el orden 4.
+\item \textbf{Errores relativos con referencia nula} ($x(0)=0$, cruces por cero): se omiten en lugar de dividir por cero; los gráficos logarítmicos excluyen errores exactamente nulos y lo advierten.
+\item \textbf{Esquema SQL.} Las nuevas columnas rompían los \texttt{INSERT} posicionales de la prueba del esquema; se reescribieron con columnas nombradas y se agregó una prueba de \texttt{json\_valid}.
+\item \textbf{Compatibilidad.} Una f-string anidada con comillas iguales sólo funcionaba en Python $\ge3.12$; se reescribió para mantener la compatibilidad con Python 3.10 declarada en el README.
+\item \textbf{Escala de gráficos.} El polinomio de Runge alcanza $\pm60$ y aplastaba la escala; en la curva reconstruida se recortan los valores con $|p|>5$ y se indica en la nota del gráfico.
+\end{enumerate}
+
+\subsection{Pendiente para la semana 3}
+\begin{enumerate}
+\item Validar con los datos de referencia los tres escenarios de los cuatro casos y completar las comparaciones con gráficos de error y convergencia.
+\item Redactar las conclusiones definitivas (numérica y del problema) de cada caso y la conclusión integradora.
+\item Publicar la aplicación con persistencia, grabar el video de 3 minutos y preparar la defensa: cada integrante cambia parámetros, ejecuta, recupera un experimento y lo interpreta.
+\end{enumerate}
+
+% ---------------- 8 ----------------
+\section{Enfoque por mención}
+{\small
+\begin{longtable}{p{2.6cm}p{12.6cm}}
+\toprule
+\textbf{Mención} & \textbf{Aporte en la semana 2}\\
+\midrule
+Ingeniería de Sistemas & API REST con validación y errores 422, persistencia transaccional en SQLite y recuperación sin recalcular, prueba de reinicio, aplicación web con historial y modo estático, 33 pruebas nuevas (de 21 a 54).\\
+IA y Ciencia de Datos & Diseño de los escenarios con datos sintéticos reproducibles (semillas, ruido controlado), validación con registros ocultos, constante de Lebesgue y amplificación del ruido, métricas de error y sensibilidad en los cuatro módulos.\\
+\bottomrule
+\end{longtable}}
+
+\section*{Referencias}
+\begin{itemize}
+\item Burden, R. L. y Faires, J. D. \emph{Análisis numérico}.
+\item Chapra, S. C. y Canale, R. P. \emph{Métodos numéricos para ingenieros}.
+\item Golub, G. H. y Van Loan, C. F. \emph{Matrix Computations}.
+\item Trefethen, L. N. \emph{Approximation Theory and Approximation Practice} (nodos de Chebyshev y constante de Lebesgue).
+\end{itemize}
+
+\end{document}

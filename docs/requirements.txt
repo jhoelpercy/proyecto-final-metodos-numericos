@@ -1,0 +1,2 @@
+# Sólo para regenerar las figuras y tablas del informe (python docs/generar_informe_s2.py)
+matplotlib>=3.8

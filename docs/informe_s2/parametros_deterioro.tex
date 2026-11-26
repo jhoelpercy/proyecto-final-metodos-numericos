@@ -1,0 +1,19 @@
+{\footnotesize
+\begin{longtable}{lrrr}
+\toprule
+\textbf{Parámetro} & \textbf{NORMAL} & \textbf{ESTRÉS} & \textbf{MAL COND.} \\
+\midrule
+\endhead
+Deterioro inicial D$_{0}$ [\%] & 10 & 25 & 11.200001 \\
+Tasa lineal $\alpha$ [\%/mes] & 0.8 & 2 & 2.4 \\
+Aceleración $\beta$ [\%/mes$^{2}$] & 0.02 & 0.15 & -0.05 \\
+Umbral de inspección D\_u [\%] & 40 & 40 & 40 \\
+Tolerancia de raíces & 1.000$\times10^{-10}$ & 1.000$\times10^{-13}$ & 1.000$\times10^{-10}$ \\
+Retraso de mantenimiento [meses] & 3 & 3 & 3 \\
+Matriz de calibración & tramos & tramos & hilbert \\
+Tamaño del sistema n & 6 & 40 & 8 \\
+Acoplamiento $\lambda$ (A = I + $\lambda$L) & 0.1 & 5 & 0 \\
+Tolerancia de los iterativos & 1.000$\times10^{-10}$ & 1.000$\times10^{-12}$ & 1.000$\times10^{-10}$ \\
+\bottomrule
+\end{longtable}
+}

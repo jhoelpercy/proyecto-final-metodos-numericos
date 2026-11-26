@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIMTELE-RISK</title>
+  <meta name="description" content="SIMTELE-RISK: cuatro casos de estudio de transporte por cable resueltos con métodos numéricos, con historial persistente.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="barra">
+    <div class="contenedor barra-interior">
+      <a class="marca" href="#/">
+        <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path d="M2 8 30 4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M16 6v6" stroke="currentColor" stroke-width="2"/><rect x="8" y="12" width="16" height="14" rx="3" fill="currentColor"/><rect x="11" y="15" width="10" height="5" rx="1" fill="var(--barra)"/></svg>
+        SIMTELE-RISK
+      </a>
+      <nav id="navegacion" aria-label="Secciones">
+        <a href="#/" data-ruta="inicio">Inicio</a>
+        <a href="#/modulo/1" data-ruta="modulo-1">Detención</a>
+        <a href="#/modulo/2" data-ruta="modulo-2">Deterioro</a>
+        <a href="#/modulo/3" data-ruta="modulo-3">Oscilaciones</a>
+        <a href="#/modulo/4" data-ruta="modulo-4">Sensores</a>
+        <a href="#/historial" data-ruta="historial">Historial</a>
+      </nav>
+      <span class="version" id="modo">Semana 2</span>
+    </div>
+  </header>
+
+  <main class="contenedor" id="app" tabindex="-1">
+    <p class="cargando">Cargando…</p>
+  </main>
+
+  <footer class="pie contenedor">Proyecto académico de Métodos Numéricos inspirado en Mi Teleférico, La Paz. Escenarios hipotéticos con datos sintéticos: no describen fallas verificadas ni tienen conexión con equipos reales.</footer>
+
+  <button type="button" class="burbuja" id="burbuja-estudiantes" aria-haspopup="dialog" aria-label="Ver integrantes y datos del proyecto">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M12 3 1 9l11 6 9-4.9V17h2V9L12 3zM5 13.2V17c0 1.7 3.1 3.5 7 3.5s7-1.8 7-3.5v-3.8l-7 3.8-7-3.8z"/></svg>
+  </button>
+
+  <dialog class="modal" id="modal-estudiantes" aria-labelledby="modal-titulo">
+    <div class="modal-cabecera">
+      <p class="sobretitulo">Métodos Numéricos</p>
+      <h2 id="modal-titulo">SIMTELE-RISK: Desafío integrador final</h2>
+      <button type="button" class="modal-cerrar" id="modal-cerrar" aria-label="Cerrar">×</button>
+    </div>
+    <div class="modal-cuerpo">
+      <p class="modal-etiqueta">Semana 2 · Integración matemática, aplicación y persistencia</p>
+      <ul class="lista-estudiantes" id="lista-estudiantes"></ul>
+    </div>
+  </dialog>
+
+  <script src="vendor/chart.umd.js"></script>
+  <script src="js/estudiantes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

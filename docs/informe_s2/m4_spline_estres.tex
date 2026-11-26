@@ -1,0 +1,13 @@
+{\footnotesize
+\begin{longtable}{lrrrrr}
+\toprule
+\textbf{Método} & \textbf{Iteraciones} & \textbf{¿Convergió?} & \textbf{Error relativo vs numpy.linalg.solve} & \textbf{Residuo relativo} & \textbf{t [ms]} \\
+\midrule
+\endhead
+Gradiente conjugado & 21 & Sí & 1.615$\times10^{-14}$ & 8.875$\times10^{-15}$ & 0.406 \\
+Gauss-Seidel & 22 & Sí & 2.119$\times10^{-13}$ & 7.850$\times10^{-14}$ & 2.14 \\
+Jacobi & 38 & Sí & 8.594$\times10^{-14}$ & 6.464$\times10^{-14}$ & 0.635 \\
+LU con pivoteo parcial & 1 & Sí & 2.958$\times10^{-17}$ & 4.030$\times10^{-17}$ & 0.485 \\
+\bottomrule
+\end{longtable}
+}

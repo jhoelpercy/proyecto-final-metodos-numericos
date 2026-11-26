@@ -1,0 +1,27 @@
+{\footnotesize
+\begin{longtable}{lllrlrrr}
+\toprule
+\textbf{Escenario} & \textbf{Familia} & \textbf{Método} & \textbf{Iter./pasos} & \textbf{Conv.} & \textbf{Resultado} & \textbf{Error abs.} & \textbf{Error rel. / otro} \\
+\midrule
+\endhead
+NORMAL & Interpolación & Lagrange & 4 & sí & 2.352$\times10^{-7}$ & 3.323$\times10^{-7}$ & malla 1.172$\times10^{-6}$ \\
+NORMAL & Interpolación & Newton (diferencias divididas) & 4 & sí & 2.352$\times10^{-7}$ & 3.323$\times10^{-7}$ & malla 1.172$\times10^{-6}$ \\
+NORMAL & Interpolación & Spline cúbico natural & 4 & sí & 0.0011717694 & 0.00117 & malla 0.00117 \\
+NORMAL & Raíces & Bisección & 31 & sí & 0.52416493 & 5.662$\times10^{-4}$ & res. 4.996$\times10^{-14}$ \\
+NORMAL & Raíces & Newton-Raphson & 3 & sí & 0.52416493 & 5.662$\times10^{-4}$ & res. 0 \\
+NORMAL & Raíces & Secante & 3 & sí & 0.52416493 & 5.662$\times10^{-4}$ & res. 0 \\
+ESTRÉS & Interpolación & Lagrange & 6 & sí & 1.7629519 & 4.31 & malla 39.5 \\
+ESTRÉS & Interpolación & Newton (diferencias divididas) & 6 & sí & 1.7629519 & 4.31 & malla 39.5 \\
+ESTRÉS & Interpolación & Spline cúbico natural & 6 & sí & 0.0026865566 & 0.00533 & malla 0.00534 \\
+ESTRÉS & Raíces & Bisección & 31 & sí & 1.5702137 & 5.827$\times10^{-4}$ & res. 1.673$\times10^{-13}$ \\
+ESTRÉS & Raíces & Newton-Raphson & 3 & sí & 1.5702137 & 5.827$\times10^{-4}$ & res. 8.327$\times10^{-17}$ \\
+ESTRÉS & Raíces & Secante & 4 & sí & 1.5702137 & 5.827$\times10^{-4}$ & res. 8.327$\times10^{-17}$ \\
+MAL COND. & Interpolación & Lagrange & 20 & sí & 12.694278 & 40 & malla 59.8 \\
+MAL COND. & Interpolación & Newton (diferencias divididas) & 20 & sí & 12.694278 & 40 & malla 59.8 \\
+MAL COND. & Interpolación & Spline cúbico natural & 20 & sí & 0.0012684188 & 0.00317 & malla 0.00318 \\
+MAL COND. & Raíces & Bisección & 29 & sí & -0.2 & 9.304$\times10^{-13}$ & res. 2.387$\times10^{-12}$ \\
+MAL COND. & Raíces & Newton-Raphson & 4 & sí & -0.2 & 8.327$\times10^{-16}$ & res. 0 \\
+MAL COND. & Raíces & Secante & 1 & sí & -0.2 & 8.327$\times10^{-16}$ & res. 0 \\
+\bottomrule
+\end{longtable}
+}
